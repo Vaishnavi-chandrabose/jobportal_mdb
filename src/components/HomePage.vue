@@ -2,7 +2,7 @@
   <div class="home-page">
     <h1>Home Page</h1>
     <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidate="deleteCandidate" @openEditCandidateModal="openEditCandidateModal" />
-    <div v-else>Loading...</div>
+    <div v-else></div>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
     CandidateTable,
   },
   setup() {
-    const { candidates, getJobs, deleteCandidate, openEditCandidateModal } = usejobportal();
+    const { candidates, getJobs, } = usejobportal();
     const isDataLoaded = ref(false); 
 
     onMounted(async () => {
@@ -26,8 +26,6 @@ export default {
 
     return {
       candidates,
-      deleteCandidate,
-      openEditCandidateModal,
       isDataLoaded, 
     };
   },
@@ -48,8 +46,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align content to the top */
-  padding-top: 10%; /* Add 10% margin from the top */
+  justify-content: flex-start; 
+  padding-top: 10%; 
 }
 
 #app {
@@ -83,6 +81,7 @@ h1 {
   background-color: #ffa07a;
   padding: 10px;
   border-radius: 2px;
+   width: 100%;
 }
 </style>
 
