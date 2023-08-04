@@ -28,6 +28,43 @@ export const usejobportal = defineStore('jobportal', {
   }),
 
   actions: {
+    async saveJob(candidateData) {
+      if (!this.validateForm(candidateData)) {
+        console.log('Form validation failed. Job not saved.');
+        return;
+      }
+  
+      try {
+        const accessToken = await this.getMongoDBToken();
+        if (!accessToken) {
+          console.log('Failed to get MongoDB access token. Job not saved.');
+          return;
+        }
+  
+        const response = await axios.post(
+          'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/insertOne',
+          {
+            dataSource: 'Cluster0',
+            database: 'job_portal_db',
+            collection: 'Job_portal_tabel',
+            document: candidateData,
+          },
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + accessToken,
+            },
+          }
+        );
+  
+        this.candidates.push(candidateData);
+  
+        await this.getJobs();
+      } catch (error) {
+        console.log('API Error:', error);
+      }
+    },
     async getJobs() {
       try {
         const accessToken = await this.getMongoDBToken();
@@ -83,6 +120,14 @@ export const usejobportal = defineStore('jobportal', {
         return null;
       }
     },
+    validateForm(candidateData) {
+      if (!candidateData.name || !candidateData.position || !candidateData.gender)
+       {
+        return false;
+      }
+
+      return true;
+    },
    
   },
 
@@ -105,7 +150,10 @@ export const usejobportal = defineStore('jobportal', {
         location: '',
       };
     },
+   
   },
+  
+  
 });
 
 usejobportal.id = 'job';

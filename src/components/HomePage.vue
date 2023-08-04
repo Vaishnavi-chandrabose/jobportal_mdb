@@ -2,7 +2,13 @@
   <div class="home-page">
     <h1>Home Page</h1>
     <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidate="deleteCandidate" @openEditCandidateModal="openEditCandidateModal" />
-    <div v-else></div>
+    <button @click="openAddCandidateModal">Add Candidate</button>
+    <div v-if="showAddCandidateModal" class="modal">
+      <div class="modal-content">
+        <h2>Add Candidate</h2>
+        <AddCandidateForm @addCandidate="addCandidate" @closeModal="closeAddCandidateModal" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -10,23 +16,37 @@
 import { onMounted, ref } from 'vue';
 import { usejobportal } from '@/stores/jobportal';
 import CandidateTable from '../components/CandidateTable.vue';
+import AddCandidateForm from '../components/AddCandidateForm.vue';
 
 export default {
   components: {
     CandidateTable,
+    AddCandidateForm,
   },
   setup() {
-    const { candidates, getJobs, } = usejobportal();
-    const isDataLoaded = ref(false); 
+    const { candidates, getJobs, addCandidate } = usejobportal();
+    const isDataLoaded = ref(false);
+    const showAddCandidateModal = ref(false);
 
     onMounted(async () => {
       await getJobs();
-      isDataLoaded.value = true; 
+      isDataLoaded.value = true;
     });
+
+    const openAddCandidateModal = () => {
+      showAddCandidateModal.value = true;
+    };
+
+    const closeAddCandidateModal = () => {
+      showAddCandidateModal.value = false;
+    };
 
     return {
       candidates,
-      isDataLoaded, 
+      openAddCandidateModal,
+      showAddCandidateModal, 
+      closeAddCandidateModal,
+      isDataLoaded,
     };
   },
 };
@@ -83,6 +103,20 @@ h1 {
   border-radius: 2px;
    width: 100%;
 }
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 30;
+  left: 50;
+  width: 100%;
+  height: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  
+}
+
+
 </style>
 
 
