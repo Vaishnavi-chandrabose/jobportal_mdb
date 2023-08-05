@@ -8,6 +8,7 @@
           <th>Gender</th>
           <th>Location</th>
           <th>Experience</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -17,6 +18,9 @@
           <td>{{ candidate.gender }}</td>
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
+          <td>
+            <button @click="deleteCandidateAsync(candidate.id)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -39,10 +43,19 @@ export default defineComponent({
     },
   },
   setup() {
-    const { candidates } = usejobportal();
+    const { candidates, deleteCandidate } = usejobportal();
+
+    const deleteCandidateAsync = async (candidateId) => {
+      try {
+        await deleteCandidate(candidateId);
+      } catch (error) {
+        console.log('Error deleting candidate:', error);
+      }
+    };
 
     return {
       candidates,
+      deleteCandidateAsync,
     };
   },
 });

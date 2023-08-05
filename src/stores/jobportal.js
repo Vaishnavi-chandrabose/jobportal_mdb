@@ -28,6 +28,43 @@ export const usejobportal = defineStore('jobportal', {
   }),
 
   actions: {
+    async deleteCandidateFromDB(candidateId) {
+      try {
+        const accessToken = await this.getMongoDBToken();
+        if (!accessToken) {
+          console.log('Failed to get MongoDB access token. Candidate not deleted.');
+          return;
+        }
+
+        const response = await axios.post(
+          'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
+          {
+            dataSource: 'Cluster0',
+            database: 'job_portal_db',
+            collection: 'Job_portal_tabel',
+            filter: {
+              id: candidateId, 
+            },
+          },
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + accessToken,
+            },
+          }
+        );
+           const index = this.candidates.findIndex((candidate) => candidate.id === candidateId);
+        if (index !== -1) {
+          this.candidates.splice(index, 1);
+        }
+
+        console.log('Candidate deleted from MongoDB:', response.data);
+      } catch (error) {
+        console.log('API Error:', error);
+      }
+    },
+
     async saveJob(candidateData) {
       if (!this.validateForm(candidateData)) {
         console.log('Form validation failed. Job not saved.');

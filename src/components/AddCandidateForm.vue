@@ -4,33 +4,60 @@
       <table>
         <tr>
           <td><label for="name">Name:</label></td>
-          <td><input v-model="candidateData.name" type="text" id="name" /></td>
+          <td>
+            <input v-model="candidateData.name" type="text" id="name" />
+            <div v-if="showAlert && !candidateData.name" class="error-message">
+              Please Enter Candidate Name.
+            </div>
+          </td>
         </tr>
         <tr>
           <td><label for="position">Position:</label></td>
-          <td><input v-model="candidateData.position" type="text" id="position" /></td>
+          <td>
+            <select v-model="candidateData.position" id="position">
+              <option value="" disabled>Select Position</option>
+              <option value="Software Engineer">Software Engineer</option>
+              <option value="FrontEnd Developer">FrontEnd Developer</option>
+              <option value="BackEnd Developer">BackEnd Developer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Product Manager">Product Manager</option>
+            </select>
+            <div v-if="showAlert && !candidateData.position" class="error-message">
+              Please Select a Position.
+            </div>
+          </td>
         </tr>
         <tr>
           <td><label for="gender">Gender:</label></td>
-          <td><input v-model="candidateData.gender" type="text" id="gender" /></td>
+          <td>
+            <input v-model="candidateData.gender" type="text" id="gender" />
+          </td>
         </tr>
         <tr>
           <td><label for="experience">Experience:</label></td>
-          <td><input v-model="candidateData.experience" type="text" id="experience" /></td>
+          <td>
+            <input v-model="candidateData.experience" type="text" id="experience" />
+          </td>
         </tr>
         <tr>
           <td><label for="location">Location:</label></td>
-          <td><input v-model="candidateData.location" type="text" id="location" /></td>
+          <td>
+            <input v-model="candidateData.location" type="text" id="location" />
+            <div v-if="showAlert && !candidateData.location" class="error-message">
+              Please Enter Candidate Location.
+            </div>
+          </td>
         </tr>
       </table>
-
       <button type="submit">Save Candidate</button>
+      <span class="close-btn" @click="closeAddCandidateModal">&times;</span>
     </form>
   </div>
 </template>
 
+
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent , ref } from 'vue';
 import { usejobportal } from '../stores/jobportal';
 
 export default defineComponent({
@@ -44,12 +71,15 @@ export default defineComponent({
       location: '',
     };
 
-  const saveCandidate = async () => {
+    const showAlert = ref(false); // Reactive variable to control error message visibility
+
+    const saveCandidate = async () => {
       console.log('Save Candidate button clicked.');
       if (!store.validateForm(candidateData)) {
-    console.log('Form validation failed. Candidate not saved.');
-    return;
-  }
+        console.log('Form validation failed. Candidate not saved.');
+        showAlert.value = true; // Show error messages when form is submitted
+        return;
+      }
       await store.saveJob(candidateData);
       resetForm();
     };
@@ -60,15 +90,24 @@ export default defineComponent({
       candidateData.gender = '';
       candidateData.experience = '';
       candidateData.location = '';
+      showAlert.value = false; // Reset showAlert when the form is reset
+    };
+
+    const closeAddCandidateModal = () => {
+      const instance = getCurrentInstance();
+      instance.emit('closeModal');
     };
 
     return {
       candidateData,
       saveCandidate,
+      closeAddCandidateModal,
+      showAlert,
     };
   },
 });
 </script>
+
 
 
 
@@ -78,9 +117,9 @@ export default defineComponent({
   position: fixed;
   top: 40%;
   bottom:0%;
-  left: 80%;
+  left: 70%;
   transform: translate(-50%, -50%);
-  width: 50%;
+  width: 0%;
   max-width: 600px;
   padding: 30px;
   background-color: #f1f1f1; 
