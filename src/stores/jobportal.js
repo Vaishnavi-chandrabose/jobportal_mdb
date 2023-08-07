@@ -28,7 +28,7 @@ export const usejobportal = defineStore('jobportal', {
   }),
 
   actions: {
-    async deleteCandidateFromDB(candidateId) {
+    async deleteCandidate(candidateId) {
       try {
         const accessToken = await this.getMongoDBToken();
         if (!accessToken) {
@@ -43,7 +43,7 @@ export const usejobportal = defineStore('jobportal', {
             database: 'job_portal_db',
             collection: 'Job_portal_tabel',
             filter: {
-              id: candidateId, 
+              id: candidateId,
             },
           },
           {
@@ -54,10 +54,6 @@ export const usejobportal = defineStore('jobportal', {
             },
           }
         );
-           const index = this.candidates.findIndex((candidate) => candidate.id === candidateId);
-        if (index !== -1) {
-          this.candidates.splice(index, 1);
-        }
 
         console.log('Candidate deleted from MongoDB:', response.data);
       } catch (error) {

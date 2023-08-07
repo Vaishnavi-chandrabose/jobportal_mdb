@@ -19,21 +19,17 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="deleteCandidateAsync(candidate.id)">Delete</button>
+            <button @click="deleteCandidateFromTable(candidate.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div v-if="showEditCandidateModal" class="modal">
-      <div class="modal-content">
-        <EditCandidate :candidateData="selectedCandidateData" @updateCandidate="updateCandidateRow" @closeModal="closeEditCandidateModal" />
-      </div>
-    </div>
   </div>
 </template>
+
 <script>
 import { usejobportal } from '@/stores/jobportal';
-import { defineComponent,ref } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -45,7 +41,7 @@ export default defineComponent({
   setup() {
     const { candidates, deleteCandidate } = usejobportal();
 
-    const deleteCandidateAsync = async (candidateId) => {
+    const deleteCandidateFromTable = async (candidateId) => {
       try {
         await deleteCandidate(candidateId);
       } catch (error) {
@@ -55,11 +51,13 @@ export default defineComponent({
 
     return {
       candidates,
-      deleteCandidateAsync,
+      deleteCandidateFromTable,
     };
   },
 });
 </script>
+
+
 
 
 

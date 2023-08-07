@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <h1>Home Page</h1>
-    <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidate="deleteCandidate" @openEditCandidateModal="openEditCandidateModal" />
+    <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" @openEditCandidateModal="openEditCandidateModal" />
     <button @click="openAddCandidateModal">Add Candidate</button>
     <div v-if="showAddCandidateModal" class="modal">
       <div class="modal-content">
@@ -24,7 +24,7 @@ export default {
     AddCandidateForm,
   },
   setup() {
-    const { candidates, getJobs, addCandidate } = usejobportal();
+    const { candidates, getJobs, addCandidate, deleteCandidateAsync } = usejobportal();
     const isDataLoaded = ref(false);
     const showAddCandidateModal = ref(false);
 
@@ -44,13 +44,15 @@ export default {
     return {
       candidates,
       openAddCandidateModal,
-      showAddCandidateModal, 
+      showAddCandidateModal,
       closeAddCandidateModal,
       isDataLoaded,
+      deleteCandidateAsync,
     };
   },
 };
 </script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
