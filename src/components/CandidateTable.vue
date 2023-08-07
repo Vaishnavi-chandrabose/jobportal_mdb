@@ -19,11 +19,22 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="deleteCandidateFromTable(candidate.id)">Delete</button>
+            <button @click="confirmDeleteCandidate(candidate.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+    <transition name="fade">
+      <div class="confirmation-modal" v-if="showModal">
+        <div class="modal-content">
+          <p>Are you sure you want to delete the candidate?</p>
+          <div class="modal-buttons">
+            <button @click="deleteCandidateAndCloseModal">Yes</button>
+            <button @click="closeModal">No</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -40,26 +51,26 @@ export default defineComponent({
   },
   setup() {
     const { candidates, deleteCandidate } = usejobportal();
+    
 
-    const deleteCandidateFromTable = async (candidateId) => {
-      try {
-        await deleteCandidate(candidateId);
-      } catch (error) {
-        console.log('Error deleting candidate:', error);
+    
+    const confirmDeleteCandidate = (candidateId) => {
+      const confirmation = confirm('Are you sure you want to delete the candidate?');
+      if (confirmation) {
+        deleteCandidate(candidateId); 
+      }
+       else {
+        console.log('Deletion canceled by user.');
       }
     };
 
     return {
       candidates,
-      deleteCandidateFromTable,
+     confirmDeleteCandidate,
     };
   },
 });
 </script>
-
-
-
-
 
 <style>
 .fulwidth {
