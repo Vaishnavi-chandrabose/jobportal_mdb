@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <h1>Home Page</h1>
-    <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" @openEditCandidateModal="openEditCandidateModal" />
+    <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" />
     <button @click="openAddCandidateModal">Add Candidate</button>
     <div v-if="showAddCandidateModal" class="modal">
       <div class="modal-content">

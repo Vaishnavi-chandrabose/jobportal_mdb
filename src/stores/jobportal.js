@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 export const usejobportal = defineStore('jobportal', {
   state: () => ({
@@ -10,7 +11,7 @@ export const usejobportal = defineStore('jobportal', {
     mongoData: [],
     isModalOpen: false,
     job: {
-      job_id: '',
+      candidateid: '',
       name: '',
       position: '',
       gender: '',
@@ -18,7 +19,7 @@ export const usejobportal = defineStore('jobportal', {
       location: '',
     },
     errors: {
-      job_id: '',
+      candidateid: '',
       name: '',
       position: '',
       gender: '',
@@ -28,42 +29,41 @@ export const usejobportal = defineStore('jobportal', {
   }),
 
   actions: {
-    async deleteCandidate(candidateId) {
-      try {
-        const accessToken = await this.getMongoDBToken();
-        if (!accessToken) {
-          console.log('Failed to get MongoDB access token. Candidate not deleted.');
-          return;
-        }
-  
-        const response = await axios.post(
-          'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
-          {
-            dataSource: 'Cluster0',
-            database: 'job_portal_db',
-            collection: 'Job_portal_tabel',
-            filter: {
-              id: candidateId,
-            },
-          },
-          {
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + accessToken,
-            },
-          }
-        );
-  
-        console.log('Candidate deleted from MongoDB:', response.data);
-        
-        // Update the candidates array in Vuex after deletion
-        this.candidates = this.candidates.filter(candidate => candidate.id !== candidateId);
-      } catch (error) {
-        console.log('API Error:', error);
+async deleteCandidate(candidateId) {
+  try {
+    const accessToken = await this.getMongoDBToken();
+    if (!accessToken) {
+      console.log('Failed to get MongoDB access token. Candidate not deleted.');
+      return;
+    }
+
+    const response = await axios.post(
+      'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
+      {
+        dataSource: 'Cluster0',
+        database: 'job_portal_db',
+        collection: 'Job_portal_tabel',
+        filter: {
+          candidateid: candidateId, 
+        },
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
       }
-    },
-  
+    );
+
+    console.log('Candidate deleted from MongoDB:', response.data);
+
+    this.candidates = this.candidates.filter(candidate => candidate.candidateid !== candidateId);
+
+  } catch (error) {
+    console.log('API Error:', error);
+  }
+},
 
     async saveJob(candidateData) {
       if (!this.validateForm(candidateData)) {
@@ -101,6 +101,12 @@ export const usejobportal = defineStore('jobportal', {
       } catch (error) {
         console.log('API Error:', error);
       }
+    },
+    async addCandidate(newCandidate) {
+      // Generate a unique ID for the candidate
+      newCandidate.id = uuidv4();
+      this.candidates.push(newCandidate);
+      this.saveCandidatesToBackend();
     },
     async getJobs() {
       try {

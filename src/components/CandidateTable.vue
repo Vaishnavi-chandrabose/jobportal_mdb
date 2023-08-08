@@ -3,6 +3,7 @@
     <table class="fulwidth">
       <thead>
         <tr>
+          <th>Candidateid</th>
           <th>Name</th>
           <th>Position</th>
           <th>Gender</th>
@@ -12,29 +13,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(candidate, index) in candidates" :key="candidate.id">
+        <tr v-for="(candidate, index) in candidates" :key="candidate.candidateid">
+          <td>{{ candidate.candidateid }}</td>
           <td>{{ candidate.name }}</td>
           <td>{{ candidate.position }}</td>
           <td>{{ candidate.gender }}</td>
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="confirmDeleteCandidate(candidate.id)">Delete</button>
+            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <transition name="fade">
-      <div class="confirmation-modal" v-if="showModal">
-        <div class="modal-content">
-          <p>Are you sure you want to delete the candidate?</p>
-          <div class="modal-buttons">
-            <button @click="deleteCandidateAndCloseModal">Yes</button>
-            <button @click="closeModal">No</button>
-          </div>
-        </div>
-      </div>
-    </transition>
+    
   </div>
 </template>
 
@@ -55,14 +47,15 @@ export default defineComponent({
 
     
     const confirmDeleteCandidate = (candidateId) => {
-      const confirmation = confirm('Are you sure you want to delete the candidate?');
-      if (confirmation) {
-        deleteCandidate(candidateId); 
-      }
-       else {
-        console.log('Deletion canceled by user.');
-      }
-    };
+  console.log(candidateId); // Add this line to check the candidateId
+  const confirmation = confirm('Are you sure you want to delete the candidate?');
+  if (confirmation) {
+    deleteCandidate(candidateId);
+  } else {
+    console.log('Deletion canceled by user.');
+  }
+};
+
 
     return {
       candidates,

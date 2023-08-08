@@ -3,6 +3,13 @@
     <form @submit.prevent="saveCandidate">
       <table>
         <tr>
+          <td><label for="candidateid">Candidateid:</label></td>
+          <td>
+            <input v-model="candidateData.candidateid" type="text" id="candidateid" />
+            <div v-if="showAlert && !candidateData.candidateid" class="error-message">
+              Please Enter candidateid.
+            </div>
+          </td>
           <td><label for="name">Name:</label></td>
           <td>
             <input v-model="candidateData.name" type="text" id="name" />
@@ -31,12 +38,18 @@
           <td><label for="gender">Gender:</label></td>
           <td>
             <input v-model="candidateData.gender" type="text" id="gender" />
+            <div v-if="showAlert && !candidateData.lgender" class="error-message">
+              Please Enter Candidate Gender.
+            </div>
           </td>
         </tr>
         <tr>
           <td><label for="experience">Experience:</label></td>
           <td>
             <input v-model="candidateData.experience" type="text" id="experience" />
+            <div v-if="showAlert && !candidateData.experience" class="error-message">
+              Please Enter Candidate Experience.
+            </div>
           </td>
         </tr>
         <tr>
@@ -64,6 +77,7 @@ export default defineComponent({
   setup() {
     const store = usejobportal();
     const candidateData = {
+      candidateid:'',
       name: '',
       position: '',
       gender: '',
@@ -85,6 +99,7 @@ export default defineComponent({
     };
 
     const resetForm = () => {
+      candidateData.candidateid='';
       candidateData.name = '';
       candidateData.position = '';
       candidateData.gender = '';
@@ -148,7 +163,7 @@ export default defineComponent({
 input[type="text"],
 select,
 input[type="number"] {
-  width: 70%;
+  width: 80%;
   padding: 8px;
   font-size: 16px;
   border: 2px solid #ccc;
