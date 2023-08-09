@@ -1,14 +1,18 @@
 <template>
   <div class="home-page">
-    <h1>Home Page</h1>
-    <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" />
-    <button @click="openAddCandidateModal">Add Candidate</button>
-    <div v-if="showAddCandidateModal" class="modal">
-      <div class="modal-content">
-        <h2>Add Candidate</h2>
-        <AddCandidateForm @addCandidate="addCandidate" @closeModal="closeAddCandidateModal" />
+    <header>
+      <h1>Home Page</h1>
+    </header>
+    <main>
+      <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" />
+      <button @click="openAddCandidateModal">Add Candidate</button>
+      <div v-if="showAddCandidateModal" class="modal">
+        <div class="modal-content">
+          <h2>Add Candidate</h2>
+          <AddCandidateForm @addCandidate="addCandidate" @closeModal="closeAddCandidateModal" />
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -18,11 +22,13 @@ import { onMounted, ref } from 'vue';
 import { usejobportal } from '@/stores/jobportal';
 import CandidateTable from '../components/CandidateTable.vue';
 import AddCandidateForm from '../components/AddCandidateForm.vue';
+import EditCandidateForm from '../components/EditCandidateForm.vue';
 
 export default {
   components: {
     CandidateTable,
     AddCandidateForm,
+    EditCandidateForm,
   },
   setup() {
     const { candidates, getJobs, addCandidate, deleteCandidateAsync } = usejobportal();
@@ -44,11 +50,13 @@ export default {
 
     return {
       candidates,
+      deleteCandidateAsync,
       openAddCandidateModal,
       showAddCandidateModal,
       closeAddCandidateModal,
       isDataLoaded,
-      deleteCandidateAsync,
+      
+      
     };
   },
 };

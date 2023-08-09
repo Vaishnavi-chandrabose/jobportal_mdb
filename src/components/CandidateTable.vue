@@ -21,9 +21,10 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Edit</button><br>
+            <button @click="editCandidateFunction(candidate.candidateid)">Edit</button><br>
             <button @click="confirmDeleteCandidate(candidate.candidateid)"> Delete</button><br>
           </td>
+          <EditCandidateForm :candidate="selectedCandidateData" v-if="showEditCandidateModal" />
         </tr>
       </tbody>
     </table>
@@ -32,8 +33,9 @@
 </template>
 
 <script>
-import { usejobportal } from '@/stores/jobportal';
-import { defineComponent } from 'vue';
+import { usejobportal } from '@/stores/jobportal'; // Make sure the import path is correct
+import { defineComponent,ref } from 'vue';
+import EditCandidateForm from '../components/EditCandidateForm.vue';
 
 export default defineComponent({
   props: {
@@ -43,12 +45,14 @@ export default defineComponent({
     },
   },
   setup() {
-    const { candidates, deleteCandidate } = usejobportal();
-    
+    const selectedCandidateData = ref(null);
+    const showEditCandidateModal = ref(false);
+    const store = usejobportal(); 
+    const { candidates, deleteCandidate,actions } = usejobportal();    
 
     
     const confirmDeleteCandidate = (candidateId) => {
-  console.log(candidateId); // Add this line to check the candidateId
+  console.log(candidateId); 
   const confirmation = confirm('Are you sure you want to delete the candidate?');
   if (confirmation) {
     deleteCandidate(candidateId);
@@ -56,11 +60,25 @@ export default defineComponent({
     console.log('Deletion canceled by user.');
   }
 };
-
+const editCandidateFunction = (candidate) => {
+      console.log(candidate.candidateid); 
+      const confirmation = confirm('Are you sure you want to edit the candidate?');
+      if (confirmation) {
+        selectedCandidateData.value = candidate;
+        showEditCandidateModal.value = true;
+      } else {
+        console.log('Edit canceled by user.');
+      }
+    };
 
     return {
+      confirmDeleteCandidate,
+      editCandidateFunction,
+      selectedCandidateData,
+      showEditCandidateModal,
       candidates,
-     confirmDeleteCandidate,
+      actions,
+      store,
     };
   },
 });
