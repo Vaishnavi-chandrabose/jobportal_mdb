@@ -21,7 +21,8 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Delete</button>
+            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Edit</button><br>
+            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Delete</button><br>
           </td>
         </tr>
       </tbody>

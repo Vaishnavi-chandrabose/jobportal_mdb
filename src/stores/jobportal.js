@@ -29,41 +29,7 @@ export const usejobportal = defineStore('jobportal', {
   }),
 
   actions: {
-async deleteCandidate(candidateId) {
-  try {
-    const accessToken = await this.getMongoDBToken();
-    if (!accessToken) {
-      console.log('Failed to get MongoDB access token. Candidate not deleted.');
-      return;
-    }
 
-    const response = await axios.post(
-      'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
-      {
-        dataSource: 'Cluster0',
-        database: 'job_portal_db',
-        collection: 'Job_portal_tabel',
-        filter: {
-          candidateid: candidateId, 
-        },
-      },
-      {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + accessToken,
-        },
-      }
-    );
-
-    console.log('Candidate deleted from MongoDB:', response.data);
-
-    this.candidates = this.candidates.filter(candidate => candidate.candidateid !== candidateId);
-
-  } catch (error) {
-    console.log('API Error:', error);
-  }
-},
 
     async saveJob(candidateData) {
       if (!this.validateForm(candidateData)) {
@@ -108,6 +74,41 @@ async deleteCandidate(candidateId) {
       this.candidates.push(newCandidate);
       this.saveCandidatesToBackend();
     },
+    async deleteCandidate(candidateId) {
+  try {
+    const accessToken = await this.getMongoDBToken();
+    if (!accessToken) {
+      console.log('Failed to get MongoDB access token. Candidate not deleted.');
+      return;
+    }
+
+    const response = await axios.post(
+      'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
+      {
+        dataSource: 'Cluster0',
+        database: 'job_portal_db',
+        collection: 'Job_portal_tabel',
+        filter: {
+          candidateid: candidateId, 
+        },
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
+      }
+    );
+
+    console.log('Candidate deleted from MongoDB:', response.data);
+
+    this.candidates = this.candidates.filter(candidate => candidate.candidateid !== candidateId);
+
+  } catch (error) {
+    console.log('API Error:', error);
+  }
+},
     async getJobs() {
       try {
         const accessToken = await this.getMongoDBToken();
@@ -142,6 +143,7 @@ async deleteCandidate(candidateId) {
       }
     },
 
+
     async getMongoDBToken() {
       let refresh_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYWFzX2RhdGEiOm51bGwsImJhYXNfZGV2aWNlX2lkIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwiYmFhc19kb21haW5faWQiOiI2NGEyOWI1NmYzNmE3ZjI4NmUzZmRkODUiLCJiYWFzX2lkIjoiNjRiNzUwODMyYjEyYjI4ZmRiNDMxMTM1IiwiYmFhc19pZGVudGl0eSI6eyJpZCI6IjY0YjYzMTU3ZjY1NjU4MzM1YzI2NDhiZCIsInByb3ZpZGVyX3R5cGUiOiJhcGkta2V5IiwicHJvdmlkZXJfaWQiOiI2NGEyOWI2MWYzNmE3ZjI4NmUzZmUwZmIifSwiZXhwIjoxNjk0OTE5Mjk5LCJpYXQiOjE2ODk3MzUyOTksInN0aXRjaF9kYXRhIjpudWxsLCJzdGl0Y2hfZGV2SWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJzdGl0Y2hfZG9tYWluSWQiOiI2NGEyOWI1NmYzNmE3ZjI4NmUzZmRkODUiLCJzdGl0Y2hfaWQiOiI2NGI3NTA4MzJiMTJiMjhmZGI0MzExMzUiLCJzdGl0Y2hfaWRlbnQiOnsiaWQiOiI2NGI2MzE1N2Y2NTY1ODMzNWMyNjQ4YmQiLCJwcm92aWRlcl90eXBlIjoiYXBpLWtleSIsInByb3ZpZGVyX2lkIjoiNjRhMjliNjFmMzZhN2YyODZlM2ZlMGZiIn0sInN1YiI6IjY0YjYzMTU3ZjY1NjU4MzM1YzI2NDhiYiIsInR5cCI6InJlZnJlc2gifQ.UGaUuGRmgCAbttJJZIGaR4WFNV1ER65DiC4pHY7LVdQ';
 
@@ -173,6 +175,88 @@ async deleteCandidate(candidateId) {
     },
    
   },
+  async deleteCandidate(candidateId) {
+    try {
+      const accessToken = await this.getMongoDBToken();
+      if (!accessToken) {
+        console.log('Failed to get MongoDB access token. Candidate not deleted.');
+        return;
+      }
+  
+      const response = await axios.post(
+        'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
+        {
+          dataSource: 'Cluster0',
+          database: 'job_portal_db',
+          collection: 'Job_portal_tabel',
+          filter: {
+            candidateid: candidateId, 
+          },
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + accessToken,
+          },
+        }
+      );
+  
+      console.log('Candidate deleted from MongoDB:', response.data);
+  
+      this.candidates = this.candidates.filter(candidate => candidate.candidateid !== candidateId);
+  
+    } catch (error) {
+      console.log('API Error:', error);
+    }
+  },
+  async editCandidate(updatedCandidate) {
+    if (!this.validateForm(updatedCandidate)) {
+      console.log('Form validation failed. Candidate not updated.');
+      return;
+    }
+
+    try {
+      const accessToken = await this.getMongoDBToken();
+      if (!accessToken) {
+        console.log('Failed to get MongoDB access token. Candidate not updated.');
+        return;
+      }
+
+      const response = await axios.post(
+        'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/updateOne',
+        {
+          dataSource: 'Cluster0',
+          database: 'job_portal_db',
+          collection: 'Job_portal_tabel',
+          filter: {
+            candidateid: updatedCandidate.candidateid,
+          },
+          update: {
+            $set: updatedCandidate,
+          },
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + accessToken,
+          },
+        }
+      );
+
+      console.log('Candidate updated in MongoDB:', response.data);
+      const index = this.candidates.findIndex(candidate => candidate.candidateid === updatedCandidate.candidateid);
+      if (index !== -1) {
+        this.candidates[index] = updatedCandidate;
+      }
+
+    } catch (error) {
+      console.log('API Error:', error);
+    }
+  },
+
+
 
   methods: {
     resetForm() {
