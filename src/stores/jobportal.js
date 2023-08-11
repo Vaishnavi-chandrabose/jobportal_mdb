@@ -237,8 +237,6 @@ export const usejobportal = defineStore('jobportal', {
       );
   
       console.log('Candidate updated in MongoDB:', response.data);
-  
-      // Update the candidate in the local candidates array
       const candidateIndex = this.candidates.findIndex(candidate => candidate.candidateid === updatedCandidateData.candidateid);
       if (candidateIndex !== -1) {
         this.candidates[candidateIndex] = updatedCandidateData;

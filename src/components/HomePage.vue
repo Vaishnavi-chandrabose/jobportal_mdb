@@ -2,16 +2,38 @@
   <div class="home-page">
     <header>
       <h1>Home Page</h1>
+      <table class="fulwidth">
+      <thead>
+        <tr>
+          <th>Candidateid</th>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Gender</th>
+          <th>Location</th>
+          <th>Experience</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+    </table>
     </header>
     <main>
-      <CandidateTable v-if="isDataLoaded" :candidates="candidates" @deleteCandidateAsync="deleteCandidateAsync" />
+      <CandidateTable
+  v-if="isDataLoaded"
+  :candidates="candidates"
+  :isDataLoaded="isDataLoaded"
+  @deleteCandidateAsync="deleteCandidateAsync"
+  @editCandidate="editCandidateFunction"
+/>
       <button @click="openAddCandidateModal">Add Candidate</button>
       <div v-if="showAddCandidateModal" class="modal">
         <div class="modal-content">
           <h2>Add Candidate</h2>
-          <AddCandidateForm @addCandidate="addCandidate" @closeModal="closeAddCandidateModal" />
+          <AddCandidateForm @addCandidate="AddCandidateForm" @closeModal="closeAddCandidateModal" />
         </div>
       </div>
+      <div>
+      <EditCandidateForm v-if="showEditCandidateForm" :candidate="selectedCandidateData" @closeForm="closeEditForm"/>
+    </div>
     </main>
   </div>
 </template>
@@ -31,9 +53,11 @@ export default {
     EditCandidateForm,
   },
   setup() {
-    const { candidates, getJobs, addCandidate, deleteCandidateAsync } = usejobportal();
+    const { candidates, getJobs, deleteCandidateAsync, editCandidate } = usejobportal();
     const isDataLoaded = ref(false);
     const showAddCandidateModal = ref(false);
+    const showEditCandidateForm = ref(false);
+    const selectedCandidateData = ref(null);
 
     onMounted(async () => {
       await getJobs();
@@ -48,15 +72,26 @@ export default {
       showAddCandidateModal.value = false;
     };
 
+    const openEditCandidateForm = (candidate) => {
+      selectedCandidateData.value = candidate;
+      showEditCandidateForm.value = true;
+    };
+
+    const closeEditForm = () => {
+      showEditCandidateForm.value = false;
+    };
+
     return {
       candidates,
       deleteCandidateAsync,
       openAddCandidateModal,
-      showAddCandidateModal,
       closeAddCandidateModal,
+      showAddCandidateModal,
+      showEditCandidateForm,
+      selectedCandidateData,
+      openEditCandidateForm,
+      closeEditForm,
       isDataLoaded,
-      
-      
     };
   },
 };
@@ -125,6 +160,25 @@ h1 {
   padding: 10px;
   border-radius: 10px;
   
+}
+fulwidth {
+  width: 1100px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
+
+th {
+  background-color: #6495ed;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
 }
 
 

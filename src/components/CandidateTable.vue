@@ -1,19 +1,15 @@
 <template>
   <div>
     <table class="fulwidth">
-      <thead>
-        <tr>
-          <th>Candidateid</th>
-          <th>Name</th>
-          <th>Position</th>
-          <th>Gender</th>
-          <th>Location</th>
-          <th>Experience</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+     
       <tbody>
         <tr v-for="(candidate, index) in candidates" :key="candidate.candidateid">
+          <CandidateTable
+  v-if="isDataLoaded"
+  :candidates="candidates"
+  @deleteCandidateAsync="deleteCandidateAsync"
+  @editCandidate="editCandidateFunction"
+/>
           <td>{{ candidate.candidateid }}</td>
           <td>{{ candidate.name }}</td>
           <td>{{ candidate.position }}</td>
@@ -21,54 +17,58 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="editCandidateFunction(candidate.candidateid)">Edit</button><br>
-            <button @click="confirmDeleteCandidate(candidate.candidateid)"> Delete</button><br>
+            <button @click="editCandidateFunction(candidate)">Edit</button><br>
+            <button @click="confirmDeleteCandidate(candidate.candidateid)">Delete</button>
           </td>
-          <EditCandidateForm :candidate="selectedCandidateData" v-if="showEditCandidateModal" />
         </tr>
       </tbody>
     </table>
-    
-  </div>
+
+        <EditCandidateForm v-if="showEditCandidateModal" :candidate="selectedCandidateData" @closeForm="closeEditForm" />
+      </div>
 </template>
 
 <script>
-import { usejobportal } from '@/stores/jobportal'; // Make sure the import path is correct
-import { defineComponent,ref } from 'vue';
+import { usejobportal } from '@/stores/jobportal'; 
+import { defineComponent, ref } from 'vue';
 import EditCandidateForm from '../components/EditCandidateForm.vue';
+
 
 export default defineComponent({
   props: {
     candidates: {
       type: Array,
       required: true,
+      isDataLoaded: Boolean,
     },
+    components: {
+    EditCandidateForm,
+  },
   },
   setup() {
     const selectedCandidateData = ref(null);
     const showEditCandidateModal = ref(false);
     const store = usejobportal(); 
-    const { candidates, deleteCandidate,actions } = usejobportal();    
 
-    
+    const { candidates, deleteCandidate, actions } = usejobportal();    
+
     const confirmDeleteCandidate = (candidateId) => {
-  console.log(candidateId); 
-  const confirmation = confirm('Are you sure you want to delete the candidate?');
-  if (confirmation) {
-    deleteCandidate(candidateId);
-  } else {
-    console.log('Deletion canceled by user.');
-  }
-};
-const editCandidateFunction = (candidate) => {
-      console.log(candidate.candidateid); 
-      const confirmation = confirm('Are you sure you want to edit the candidate?');
+      const confirmation = confirm('Are you sure you want to delete the candidate?');
       if (confirmation) {
-        selectedCandidateData.value = candidate;
-        showEditCandidateModal.value = true;
+        deleteCandidate(candidateId);
       } else {
-        console.log('Edit canceled by user.');
+        console.log('Deletion canceled by user.');
       }
+    };
+
+    const editCandidateFunction = (candidate) => {
+      selectedCandidateData.value = candidate;
+      showEditCandidateModal.value = true;
+    };
+
+    const closeEditForm = () => {
+      selectedCandidateData.value = null;
+      showEditCandidateModal.value = false;
     };
 
     return {
@@ -79,6 +79,7 @@ const editCandidateFunction = (candidate) => {
       candidates,
       actions,
       store,
+      closeEditForm,
     };
   },
 });
@@ -86,7 +87,7 @@ const editCandidateFunction = (candidate) => {
 
 <style>
 .fulwidth {
-  width: 1500px;
+  width: 1100px;
 }
 
 th,

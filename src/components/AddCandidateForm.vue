@@ -1,13 +1,14 @@
+ode
 <template>
   <div>
     <form @submit.prevent="saveCandidate">
       <table>
         <tr>
-          <td><label for="candidateid">Candidateid:</label></td>
+          <td><label for="candidateid">Candidate ID:</label></td>
           <td>
-            <input v-model="candidateData.candidateid" type="text" id="candidateid" />
+            <input v-model="candidateData.candidateid" type="number" id="candidateid" required/>
             <div v-if="showAlert && !candidateData.candidateid" class="error-message">
-              Please Enter candidateid.
+              Please Enter Candidate ID.
             </div>
           </td>
           <td><label for="name">Name:</label></td>
@@ -35,18 +36,21 @@
           </td>
         </tr>
         <tr>
-          <td><label for="gender">Gender:</label></td>
+          <td><label>Gender:</label></td>
           <td>
-            <input v-model="candidateData.gender" type="text" id="gender" />
-            <div v-if="showAlert && !candidateData.lgender" class="error-message">
-              Please Enter Candidate Gender.
+            <label for="male">Male</label>
+            <input v-model="candidateData.gender" type="radio" id="male" value="Male" />
+            <label for="female">Female</label>
+            <input v-model="candidateData.gender" type="radio" id="female" value="Female" />
+            <div v-if="showAlert && !candidateData.gender" class="error-message">
+              Please Select Candidate Gender.
             </div>
           </td>
         </tr>
         <tr>
           <td><label for="experience">Experience:</label></td>
           <td>
-            <input v-model="candidateData.experience" type="text" id="experience" />
+            <input v-model="candidateData.experience" type="number" id="experience" />
             <div v-if="showAlert && !candidateData.experience" class="error-message">
               Please Enter Candidate Experience.
             </div>
@@ -62,12 +66,13 @@
           </td>
         </tr>
       </table>
-      <button type="submit">Save Candidate</button>
+      <button type="submit">
+         {{ saving ? 'Saving...' : 'Save Candidate' }}
+      </button>
       <span class="close-btn" @click="closeAddCandidateModal">&times;</span>
     </form>
   </div>
 </template>
-
 
 <script>
 import { defineComponent , ref } from 'vue';
@@ -85,18 +90,29 @@ export default defineComponent({
       location: '',
     };
 
-    const showAlert = ref(false); // Reactive variable to control error message visibility
+    const showAlert = ref(false); 
+    const saving = ref(false); // Reactive variable to control error message visibility
 
-    const saveCandidate = async () => {
+   const saveCandidate = async () => {
       console.log('Save Candidate button clicked.');
       if (!store.validateForm(candidateData)) {
         console.log('Form validation failed. Candidate not saved.');
-        showAlert.value = true; // Show error messages when form is submitted
+        showAlert.value = true;
         return;
       }
-      await store.saveJob(candidateData);
-      resetForm();
+
+      saving.value = true; 
+
+      try {
+        await store.saveJob(candidateData);
+        resetForm();
+      } catch (error) {
+        console.error('Error saving candidate:', error);
+      } finally {
+        saving.value = false; 
+      }
     };
+
 
     const resetForm = () => {
       candidateData.candidateid='';
@@ -105,7 +121,7 @@ export default defineComponent({
       candidateData.gender = '';
       candidateData.experience = '';
       candidateData.location = '';
-      showAlert.value = false; // Reset showAlert when the form is reset
+      showAlert.value = false; 
     };
 
     const closeAddCandidateModal = () => {
@@ -118,6 +134,7 @@ export default defineComponent({
       saveCandidate,
       closeAddCandidateModal,
       showAlert,
+      saving,
     };
   },
 });
