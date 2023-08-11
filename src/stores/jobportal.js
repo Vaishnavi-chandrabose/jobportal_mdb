@@ -69,7 +69,6 @@ export const usejobportal = defineStore('jobportal', {
       }
     },
     async addCandidate(newCandidate) {
-      // Generate a unique ID for the candidate
       newCandidate.id = uuidv4();
       this.candidates.push(newCandidate);
       this.saveCandidatesToBackend();
@@ -201,6 +200,7 @@ export const usejobportal = defineStore('jobportal', {
           },
         }
       );
+      console.log( response);
   
       console.log('Candidate deleted from MongoDB:', response.data);
   

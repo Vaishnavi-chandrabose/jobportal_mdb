@@ -18,12 +18,12 @@
     </header>
     <main>
       <CandidateTable
-  v-if="isDataLoaded"
-  :candidates="candidates"
-  :isDataLoaded="isDataLoaded"
-  @deleteCandidateAsync="deleteCandidateAsync"
-  @editCandidate="editCandidateFunction"
-/>
+        v-if="isDataLoaded"
+        :candidates="candidates"
+        :isDataLoaded="isDataLoaded"
+        @deleteCandidateAsync="deleteCandidateAsync"
+        @editCandidate="openEditCandidateForm"
+      />
       <button @click="openAddCandidateModal">Add Candidate</button>
       <div v-if="showAddCandidateModal" class="modal">
         <div class="modal-content">
@@ -32,7 +32,12 @@
         </div>
       </div>
       <div>
-      <EditCandidateForm v-if="showEditCandidateForm" :candidate="selectedCandidateData" @closeForm="closeEditForm"/>
+        <EditCandidateForm
+      v-if="showEditCandidateForm"
+      :candidate="selectedCandidateData"
+      @saveCandidate="saveEditedCandidate"
+      @closeForm="closeEditForm"
+    />
     </div>
     </main>
   </div>
@@ -81,6 +86,15 @@ export default {
       showEditCandidateForm.value = false;
     };
 
+    const saveEditedCandidate = async (editedCandidateData) => {
+      try {
+        await editCandidate(editedCandidateData);
+        closeEditForm();
+      } catch (error) {
+        console.error('Error editing candidate:', error);
+      }
+    };
+
     return {
       candidates,
       deleteCandidateAsync,
@@ -92,6 +106,7 @@ export default {
       openEditCandidateForm,
       closeEditForm,
       isDataLoaded,
+      saveEditedCandidate,
     };
   },
 };

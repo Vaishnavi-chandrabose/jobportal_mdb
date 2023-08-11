@@ -4,12 +4,6 @@
      
       <tbody>
         <tr v-for="(candidate, index) in candidates" :key="candidate.candidateid">
-          <CandidateTable
-  v-if="isDataLoaded"
-  :candidates="candidates"
-  @deleteCandidateAsync="deleteCandidateAsync"
-  @editCandidate="editCandidateFunction"
-/>
           <td>{{ candidate.candidateid }}</td>
           <td>{{ candidate.name }}</td>
           <td>{{ candidate.position }}</td>
@@ -17,10 +11,15 @@
           <td>{{ candidate.location }}</td>
           <td>{{ candidate.experience }}</td>
           <td>
-            <button @click="editCandidateFunction(candidate)">Edit</button><br>
-            <button @click="confirmDeleteCandidate(candidate.candidateid)">Delete</button>
+          <button @click="editCandidate(candidate)">Edit</button>
+          <button @click="confirmDeleteCandidate(candidate.candidateid)">Delete</button>
           </td>
         </tr>
+        <CandidateTable
+  v-if="isDataLoaded"
+  :candidates="candidates"
+  @deleteCandidateAsync="deleteCandidateAsync"
+  @editCandidate="editCandidateFunction"/>
       </tbody>
     </table>
 
@@ -45,6 +44,12 @@ export default defineComponent({
     EditCandidateForm,
   },
   },
+  methods: {
+    editCandidate(candidate) {
+      this.$emit('editCandidate', candidate);
+    },
+  },
+
   setup() {
     const selectedCandidateData = ref(null);
     const showEditCandidateModal = ref(false);
