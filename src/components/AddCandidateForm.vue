@@ -91,7 +91,7 @@ export default defineComponent({
     };
 
     const showAlert = ref(false); 
-    const saving = ref(false); // Reactive variable to control error message visibility
+    const saving = ref(false); 
 
    const saveCandidate = async () => {
       console.log('Save Candidate button clicked.');

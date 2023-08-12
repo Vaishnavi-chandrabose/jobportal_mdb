@@ -21,9 +21,13 @@
   @deleteCandidateAsync="deleteCandidateAsync"
   @editCandidate="editCandidateFunction"/>
       </tbody>
-    </table>
-
-        <EditCandidateForm v-if="showEditCandidateModal" :candidate="selectedCandidateData" @closeForm="closeEditForm" />
+    </table>        
+      <div v-if="showEditCandidateModal" class="modal">
+        <div class="modal-content">
+          <span class="close-btn" @click="closeEditForm">&times;</span>
+          <EditCandidateForm :candidate="selectedCandidateData" @closeForm="closeEditForm" />
+        </div>
+      </div>
       </div>
 </template>
 
@@ -49,6 +53,7 @@ export default defineComponent({
       this.$emit('editCandidate', candidate);
     },
   },
+  
 
   setup() {
     const selectedCandidateData = ref(null);

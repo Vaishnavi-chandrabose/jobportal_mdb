@@ -89,6 +89,7 @@ export default {
     const saveEditedCandidate = async (editedCandidateData) => {
       try {
         await editCandidate(editedCandidateData);
+
         closeEditForm();
       } catch (error) {
         console.error('Error editing candidate:', error);

@@ -1,4 +1,3 @@
-ode
 <template>
   <div>
     <form @submit.prevent="saveCandidate">
@@ -73,40 +72,29 @@ ode
     </form>
   </div>
 </template>
+
+
 <script>
 import { ref, defineComponent } from 'vue';
+import usejobportal from '@/stores/jobportal';
 
 export default defineComponent({
   props: {
     candidate: Object,
   },
+  
   setup(props, { emit }) {
     const candidateData = ref({ ...props.candidate });
     const saving = ref(false);
     const showAlert = ref(false);
 
     const validateFormData = () => {
-      if (!candidateData.value.candidateid || !candidateData.value.name || !candidateData.value.position || !candidateData.value.gender) {
-        return false;
-      }
-      return true;
+      
     };
 
-
     const saveCandidate = async () => {
-      console.log('Save Candidate button clicked.');
-      if (!validateFormData()) {
-        console.log('Form validation failed. Candidate not saved.');
-        showAlert.value = true;
-        return;
-      }
-
-      saving.value = true;
-
       try {
-        // Update candidate logic here
-        await store.editCandidate(candidateData.value);
-        // Emit event or perform necessary action to close modal
+        await usejobportal.editCandidate(candidateData.value); 
       } catch (error) {
         console.error('Error saving candidate:', error);
       } finally {
@@ -139,5 +127,4 @@ export default defineComponent({
   z-index: 9999; 
 }
 </style>
-
 
