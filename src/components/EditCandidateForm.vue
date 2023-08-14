@@ -65,41 +65,42 @@
           </td>
         </tr>
       </table>
-      <button type="submit">
-        {{ saving ? 'Saving...' : 'Save Candidate' }}
-      </button>
-      <span class="close-btn" @click="closeAddCandidateModal">&times;</span>
+      <button type="submit">Edit Candidate</button>
     </form>
   </div>
 </template>
 
-
 <script>
-import { ref, defineComponent } from 'vue';
-import usejobportal from '@/stores/jobportal';
+import { ref, defineComponent, toRefs } from 'vue';
+import { usejobportal } from '../stores/jobportal';
 
 export default defineComponent({
   props: {
     candidate: Object,
-  },
+  }, 
+  emits: ['saveCandidate', 'closeForm'],
+ // Emit saveCandidate event when the form is submitted
+ 
   
   setup(props, { emit }) {
-    const candidateData = ref({ ...props.candidate });
+    const { candidate } = toRefs(props); // Destructure candidate object
+    const candidateData = ref({ ...props.candidate.value });
     const saving = ref(false);
     const showAlert = ref(false);
-
-    const validateFormData = () => {
-      
-    };
+    const store = usejobportal();
+    const editedCandidateData = ref({ ...props.candidate }); // Copy prop data to a reactive variable
 
     const saveCandidate = async () => {
       try {
-        await usejobportal.editCandidate(candidateData.value); 
+        saving.value = true;
+        await store.editCandidate(candidateData.value); // Assuming editCandidate function updates in MongoDB
+        emit('closeForm'); // Emit an event to close the form modal
       } catch (error) {
         console.error('Error saving candidate:', error);
       } finally {
         saving.value = false;
       }
+      
     };
 
     return {
@@ -111,6 +112,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style>
 .modal {
@@ -127,4 +129,3 @@ export default defineComponent({
   z-index: 9999; 
 }
 </style>
-

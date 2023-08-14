@@ -2,6 +2,10 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
+function usermessage(message) {
+  alert(message);
+}
+
 export const usejobportal = defineStore('jobportal', {
   state: () => ({
     candidates: [],
@@ -27,6 +31,7 @@ export const usejobportal = defineStore('jobportal', {
       location: '',
     },
   }),
+  
 
   actions: {
 
@@ -64,12 +69,12 @@ export const usejobportal = defineStore('jobportal', {
         this.candidates.push(candidateData);
   
         await this.getJobs();
+        usermessage('Candidate added successfully!');
       } catch (error) {
         console.log('API Error:', error);
       }
     },
     async addCandidate(newCandidate) {
-      // Generate a unique ID for the candidate
       newCandidate.id = uuidv4();
       this.candidates.push(newCandidate);
       this.saveCandidatesToBackend();
@@ -138,7 +143,9 @@ export const usejobportal = defineStore('jobportal', {
         const response = await axios.request(config);
         this.candidates = response.data.documents; // Corrected to set candidates with the fetched data
         console.log('Job data fetched successfully:', response.data.documents);
+        
       } catch (error) {
+        usermessage('Failed to add candidate. Please try again.');
         console.log('API Error:', error);
       }
     },
@@ -173,80 +180,83 @@ export const usejobportal = defineStore('jobportal', {
 
       return true;
     },
-   
-  },
-  async deleteCandidate(candidateId) {
-    try {
-      const accessToken = await this.getMongoDBToken();
-      if (!accessToken) {
-        console.log('Failed to get MongoDB access token. Candidate not deleted.');
-        return;
-      }
-  
-      const response = await axios.post(
-        'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
-        {
-          dataSource: 'Cluster0',
-          database: 'job_portal_db',
-          collection: 'Job_portal_tabel',
-          filter: {
-            candidateid: candidateId, 
-          },
-        },
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + accessToken,
-          },
+    async deleteCandidate(candidateId) {
+      try {
+        const accessToken = await this.getMongoDBToken();
+        if (!accessToken) {
+          console.log('Failed to get MongoDB access token. Candidate not deleted.');
+          return;
         }
-      );
-  
-      console.log('Candidate deleted from MongoDB:', response.data);
-  
-      this.candidates = this.candidates.filter(candidate => candidate.candidateid !== candidateId);
-  
-    } catch (error) {
-      console.log('API Error:', error);
-    }
-  },
-  async editCandidate(updatedCandidateData) {
-    try {
-      const accessToken = await this.getMongoDBToken();
-      if (!accessToken) {
-        console.log('Failed to get MongoDB access token. Candidate not edited.');
-        return;
-      }
-  
-      const response = await axios.post(
-        'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/updateOne',
-        {
-          dataSource: 'Cluster0',
-          database: 'job_portal_db',
-          collection: 'Job_portal_tabel',
-          filter: { candidateid: updatedCandidateData.candidateid },
-          update: { $set: updatedCandidateData },
-        },
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + accessToken,
+    
+        const response = await axios.post(
+          'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/deleteOne',
+          {
+            dataSource: 'Cluster0',
+            database: 'job_portal_db',
+            collection: 'Job_portal_tabel',
+            filter: {
+              candidateid: candidateId, 
+            },
           },
-        }
-      );
-  
-      console.log('Candidate updated in MongoDB:', response.data);
-  
-      // Update the candidate in the local candidates array
-      const candidateIndex = this.candidates.findIndex(candidate => candidate.candidateid === updatedCandidateData.candidateid);
-      if (candidateIndex !== -1) {
-        this.candidates[candidateIndex] = updatedCandidateData;
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + accessToken,
+            },
+          }
+        );
+    
+        console.log('Candidate deleted from MongoDB:', response.data);
+        usermessage('Candidate deleted successfully!');
+    
+        this.candidates = this.candidates.filter(candidate => candidate._id !== candidateId);
+    
+      } catch (error) {
+        usermessage('Failed to delete candidate. Please try again.');
+        console.log('API Error:', error);
       }
-    } catch (error) {
-      console.log('API Error:', error);
-    }
-  },
+    },
+    async editCandidate(updatedCandidateData) {
+      try {
+        const accessToken = await this.getMongoDBToken();
+        if (!accessToken) {
+          console.log('Failed to get MongoDB access token. Candidate not edited.');
+          return;
+        }
+
+        const response = await axios.post(
+          'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/updateOne',
+          {
+            dataSource: 'Cluster0',
+            database: 'job_portal_db',
+            collection: 'Job_portal_tabel',
+            filter: { _id: updatedCandidateData._id },
+            update: { $set: updatedCandidateData },
+          },
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + accessToken,
+            },
+          }
+        );
+
+        console.log('Candidate updated in MongoDB:', response.data);
+        usermessage('Candidate edited successfully!');
+        const candidateIndex = this.candidates.findIndex(candidate => candidate._id === updatedCandidateData._id);
+        if (candidateIndex !== -1) {
+          this.candidates[candidateIndex] = updatedCandidateData;
+        }
+      } catch (error) {
+        usermessage('Failed to edit Candidate Please try again.!');
+        console.log('API Error:', error);
+      }
+    },
+    
+  },    
+ 
   
 
   methods: {
