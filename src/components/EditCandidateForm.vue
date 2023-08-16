@@ -84,7 +84,7 @@ export default defineComponent({
   
   setup(props, { emit }) {
     const { candidate } = toRefs(props); // Destructure candidate object
-    const candidateData = ref({ ...props.candidate.value });
+    const candidateData = ref({ ...candidate.value });
     const saving = ref(false);
     const showAlert = ref(false);
     const store = usejobportal();

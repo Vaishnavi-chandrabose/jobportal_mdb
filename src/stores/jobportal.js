@@ -75,6 +75,7 @@ export const usejobportal = defineStore('jobportal', {
       }
     },
     async addCandidate(newCandidate) {
+      // Generate a unique ID for the candidate
       newCandidate.id = uuidv4();
       this.candidates.push(newCandidate);
       this.saveCandidatesToBackend();
@@ -224,6 +225,9 @@ export const usejobportal = defineStore('jobportal', {
           console.log('Failed to get MongoDB access token. Candidate not edited.');
           return;
         }
+        const candidateId=updatedCandidateData._id
+        const filter={_id:{$oid:candidateId}}
+        const update={$set:{...updatedCandidateData,_id:undefined}}
 
         const response = await axios.post(
           'https://ap-south-1.aws.data.mongodb-api.com/app/data-fhzlj/endpoint/data/v1/action/updateOne',
@@ -231,8 +235,8 @@ export const usejobportal = defineStore('jobportal', {
             dataSource: 'Cluster0',
             database: 'job_portal_db',
             collection: 'Job_portal_tabel',
-            filter: { _id: updatedCandidateData._id },
-            update: { $set: updatedCandidateData },
+            filter,
+            update,
           },
           {
             headers: {
@@ -245,10 +249,7 @@ export const usejobportal = defineStore('jobportal', {
 
         console.log('Candidate updated in MongoDB:', response.data);
         usermessage('Candidate edited successfully!');
-        const candidateIndex = this.candidates.findIndex(candidate => candidate._id === updatedCandidateData._id);
-        if (candidateIndex !== -1) {
-          this.candidates[candidateIndex] = updatedCandidateData;
-        }
+        
       } catch (error) {
         usermessage('Failed to edit Candidate Please try again.!');
         console.log('API Error:', error);
